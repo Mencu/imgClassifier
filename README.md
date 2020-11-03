@@ -2,7 +2,7 @@
 
 A basic 2D image classifier. 
 
-Used framework is tensorflow. 
+Used framework is Tensorflow. 
 
 The model is applied to images from the PatchCamelyon (PCam) to identify tumors on lymph nodes.
 Dataset: https://github.com/basveeling/pcam

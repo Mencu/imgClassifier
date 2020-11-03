@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import os 
 import sys
+import matplotlib.pyplot as plt
 import tensorflow as tf
 from tensorflow.keras import layers
 from tensorflow.keras.models import Sequential
@@ -19,13 +20,10 @@ NUM_CLASSES = 2         # two classes indicating positive or negative tumor
 EPOCHS = 10
 
 def load_images():
-    '''import images from folders
+    '''import images from folders (.h5 format)
         x = images
         y = labels 
-    :return: HDF5Matrix '''
-
-    
-
+    :return: x_train, y_train, x_valid, y_valid, x_test, y_test: HDF5Matrix '''
 
     try:
         x_train = HDF5Matrix('images/train/camelyonpatch_level_2_split_train_x.h5', 'x')
@@ -93,6 +91,28 @@ if __name__ == '__main__':
         shuffle=False
     )
 
+    #for plots
+    acc = history.history['accuracy']
+    val_acc = history.history['val_accuracy']
+
+    loss = history.history['loss']
+    val_loss = history.history['val_loss']
+
+    epochs_range = range(EPOCHS)
+
+    plt.figure(figsize=(8, 8))
+    plt.subplot(1, 2, 1)
+    plt.plot(epochs_range, acc, label='Training Accuracy')
+    plt.plot(epochs_range, val_acc, label='Validation Accuracy')
+    plt.legend(loc='lower right')
+    plt.title('Training and Validation Accuracy')
+
+    plt.subplot(1, 2, 2)
+    plt.plot(epochs_range, loss, label='Training Loss')
+    plt.plot(epochs_range, val_loss, label='Validation Loss')
+    plt.legend(loc='upper right')
+    plt.title('Training and Validation Loss')
+    plt.show()
 
 
 
