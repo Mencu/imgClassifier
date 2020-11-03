@@ -24,15 +24,18 @@ def load_images():
         y = labels 
     :return: HDF5Matrix '''
 
+    
+
+
     try:
-        x_train = tfio.IODataset.from_hdf5(filename='images/train/camelyonpatch_level_2_split_train_x.h5', dataset='x', spec=tf.TensorSpec((96, 96, 3), dtype=tf.dtypes.uint8))
-        y_train = tfio.IODataset.from_hdf5(filename='images/train/camelyonpatch_level_2_split_train_y.h5', dataset='y')
+        x_train = HDF5Matrix('images/train/camelyonpatch_level_2_split_train_x.h5', 'x')
+        y_train = HDF5Matrix('images/train/camelyonpatch_level_2_split_train_y.h5', 'y')
 
-        x_valid = tfio.IODataset.from_hdf5(filename='images/validate/camelyonpatch_level_2_split_valid_x.h5', dataset='x')
-        y_valid = tfio.IODataset.from_hdf5(filename='images/validate/camelyonpatch_level_2_split_valid_y.h5', dataset='y')
+        x_valid = HDF5Matrix('images/validate/camelyonpatch_level_2_split_valid_x.h5', 'x')
+        y_valid = HDF5Matrix('images/validate/camelyonpatch_level_2_split_valid_y.h5', 'y')
 
-        x_test = tfio.IODataset.from_hdf5(filename='images/test/camelyonpatch_level_2_split_test_x.h5', dataset='x')
-        y_test = tfio.IODataset.from_hdf5(filename='images/test/camelyonpatch_level_2_split_test_y.h5', dataset='y')
+        x_test = HDF5Matrix('images/test/camelyonpatch_level_2_split_test_x.h5', 'x')
+        y_test = HDF5Matrix('images/test/camelyonpatch_level_2_split_test_y.h5', 'y')
 
         return x_train, y_train, x_valid, y_valid, x_test, y_test
 
@@ -66,6 +69,11 @@ if __name__ == '__main__':
 
     print(x_train.shape)
 
+    # Zip together samples and corresponding labels
+    '''train = tf.data.Dataset.zip((x_train,y_train)).batch(BATCH_SIZE, drop_remainder=True).prefetch(tf.data.experimental.AUTOTUNE)
+    test = tf.data.Dataset.zip((x_test,y_test)).batch(BATCH_SIZE, drop_remainder=True).prefetch(tf.data.experimental.AUTOTUNE)
+    valid = tf.data.Dataset.zip((x_valid,y_valid)).batch(BATCH_SIZE, drop_remainder=True).prefetch(tf.data.experimental.AUTOTUNE)
+'''
     model = create_model()
 
     # compile model
@@ -79,9 +87,10 @@ if __name__ == '__main__':
     model.summary()
 
     history = model.fit(
-        (x_train, y_train),
+        x_train, y_train,
         validation_data=(x_valid, y_valid),
-        epochs=EPOCHS
+        epochs=EPOCHS,
+        shuffle=False
     )
 
 
